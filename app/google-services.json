@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "744653129825",
+    "project_id": "cookshare-1e135",
+    "storage_bucket": "cookshare-1e135.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:744653129825:android:6752d8cbab205973aa8220",
+        "android_client_info": {
+          "package_name": "com.example.cookshare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFzwdp8aC_oPC3uaKs-PVp4ZodcQm6ZR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
