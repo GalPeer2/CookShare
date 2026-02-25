@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.cookshare.R
 import com.example.cookshare.databinding.FragmentFeedBinding
 import com.example.cookshare.model.Model
 
@@ -28,6 +29,7 @@ class FeedFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
+        setupToggle()
         setupObservers()
         
         binding.feedSwipeRefresh.setOnRefreshListener {
@@ -41,8 +43,19 @@ class FeedFragment : Fragment() {
         binding.feedRecyclerView.adapter = adapter
     }
 
+    private fun setupToggle() {
+        binding.feedToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (isChecked) {
+                when (checkedId) {
+                    R.id.button_newest -> viewModel.setOrder("newest")
+                    R.id.button_popular -> viewModel.setOrder("popular")
+                }
+            }
+        }
+    }
+
     private fun setupObservers() {
-        viewModel.getRecipesWithUsers().observe(viewLifecycleOwner) { recipesWithUsers ->
+        viewModel.orderedRecipes.observe(viewLifecycleOwner) { recipesWithUsers ->
             adapter.updateRecipes(recipesWithUsers)
         }
 
