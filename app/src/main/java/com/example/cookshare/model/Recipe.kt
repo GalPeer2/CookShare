@@ -15,9 +15,13 @@ data class Recipe(
     var shortDescription: String = "",
     var instructions: String = "",
     var pictureUrl: String = "",
-    var likedBy: List<String> = emptyList()
+    var likedBy: List<String> = emptyList(),
+    var lastUpdated: Long = 0
 ) {
     companion object {
+        const val COLLECTION = "recipes"
+        const val LAST_UPDATED = "lastUpdated"
+
         fun fromJson(json: Map<String, Any>): Recipe {
             val recipe = Recipe()
             recipe.id = json["id"] as? String ?: ""
@@ -28,6 +32,7 @@ data class Recipe(
             recipe.instructions = json["instructions"] as? String ?: ""
             recipe.pictureUrl = json["pictureUrl"] as? String ?: ""
             recipe.likedBy = json["likedBy"] as? List<String> ?: emptyList()
+            recipe.lastUpdated = json[LAST_UPDATED] as? Long ?: 0
             return recipe
         }
     }
@@ -35,13 +40,14 @@ data class Recipe(
     fun toJson(): Map<String, Any> {
         return mapOf(
             "id" to id,
-            "createdAt" to FieldValue.serverTimestamp(),
+            "createdAt" to createdAt, // Use stored value or FieldValue.serverTimestamp() when creating
             "userId" to userId,
             "name" to name,
             "shortDescription" to shortDescription,
             "instructions" to instructions,
             "pictureUrl" to pictureUrl,
-            "likedBy" to likedBy
+            "likedBy" to likedBy,
+            LAST_UPDATED to FieldValue.serverTimestamp()
         )
     }
 }

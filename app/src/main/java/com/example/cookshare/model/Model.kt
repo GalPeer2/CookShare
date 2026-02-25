@@ -35,8 +35,8 @@ class Model private constructor(context: Context) {
         ERROR
     }
 
-    val userLoadingState = MutableLiveData<LoadingState>()
     val recipesLoadingState = MutableLiveData<LoadingState>()
+    val userLoadingState = MutableLiveData<LoadingState>()
 
     fun getCurrentUser() = firebaseModel.getCurrentUser()
     fun getCurrentUserId() = firebaseModel.getCurrentUserId()
@@ -47,15 +47,19 @@ class Model private constructor(context: Context) {
     }
 
     private fun refreshUser(id: String) {
-        userLoadingState.postValue(LoadingState.LOADING)
+        userLoadingState.value = LoadingState.LOADING
         firebaseModel.getUser(id) { user ->
             if (user != null) {
                 executor.execute {
                     database.userDao().insert(user)
-                    userLoadingState.postValue(LoadingState.LOADED)
+                    mainHandler.post {
+                        userLoadingState.value = LoadingState.LOADED
+                    }
                 }
             } else {
-                userLoadingState.postValue(LoadingState.ERROR)
+                mainHandler.post {
+                    userLoadingState.value = LoadingState.ERROR
+                }
             }
         }
     }
@@ -94,7 +98,36 @@ class Model private constructor(context: Context) {
     }
 
     fun updateUser(user: User, bitmap: Bitmap?, callback: (Boolean) -> Unit) {
-        signup(user, bitmap, callback) // Same logic for update in this case
+        if (bitmap != null) {
+            firebaseModel.uploadImage(user.id, bitmap) { url ->
+                if (url != null) {
+                    val userWithImage = user.copy(profileImageUrl = url)
+                    firebaseModel.addUser(userWithImage) { success ->
+                        if (success) {
+                            executor.execute {
+                                database.userDao().insert(userWithImage)
+                                mainHandler.post { callback(true) }
+                            }
+                        } else {
+                            callback(false)
+                        }
+                    }
+                } else {
+                    callback(false)
+                }
+            }
+        } else {
+            firebaseModel.addUser(user) { success ->
+                if (success) {
+                    executor.execute {
+                        database.userDao().insert(user)
+                        mainHandler.post { callback(true) }
+                    }
+                } else {
+                    callback(false)
+                }
+            }
+        }
     }
 
     // Recipe operations
@@ -108,11 +141,20 @@ class Model private constructor(context: Context) {
     }
 
     fun refreshAllRecipes() {
-        recipesLoadingState.postValue(LoadingState.LOADING)
-        firebaseModel.getAllRecipes { recipes ->
-            executor.execute {
-                database.recipeDao().insert(*recipes.toTypedArray())
-                recipesLoadingState.postValue(LoadingState.LOADED)
+        recipesLoadingState.value = LoadingState.LOADING
+        
+        executor.execute {
+            val lastUpdated = database.recipeDao().getMaxLastUpdated()
+            
+            firebaseModel.getAllRecipes(lastUpdated) { recipes ->
+                executor.execute {
+                    if (recipes.isNotEmpty()) {
+                        database.recipeDao().insert(*recipes.toTypedArray())
+                    }
+                    mainHandler.post {
+                        recipesLoadingState.value = LoadingState.LOADED
+                    }
+                }
             }
         }
     }
@@ -120,10 +162,8 @@ class Model private constructor(context: Context) {
     fun addRecipe(recipe: Recipe, callback: (Boolean) -> Unit) {
         firebaseModel.addRecipe(recipe) { success ->
             if (success) {
-                executor.execute {
-                    database.recipeDao().insert(recipe)
-                    mainHandler.post { callback(true) }
-                }
+                refreshAllRecipes()
+                mainHandler.post { callback(true) }
             } else {
                 mainHandler.post { callback(false) }
             }

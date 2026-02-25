@@ -1,6 +1,7 @@
 package com.example.cookshare.model
 
 import android.graphics.Bitmap
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
@@ -12,7 +13,7 @@ class FirebaseModel {
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance().apply {
         firestoreSettings = FirebaseFirestoreSettings.Builder()
-            .setPersistenceEnabled(false)
+            .setPersistenceEnabled(false) // Disable Firebase local persistence as per requirements
             .build()
     }
     private val storage = FirebaseStorage.getInstance()
@@ -25,10 +26,6 @@ class FirebaseModel {
             .document(user.id)
             .set(user.toJson())
             .addOnCompleteListener { callback(it.isSuccessful) }
-    }
-
-    fun updateUser(user: User, callback: (Boolean) -> Unit) {
-        addUser(user, callback)
     }
 
     fun getUser(userId: String, callback: (User?) -> Unit) {
@@ -65,8 +62,9 @@ class FirebaseModel {
     }
 
     // Recipe operations
-    fun getAllRecipes(callback: (List<Recipe>) -> Unit) {
-        db.collection("recipes")
+    fun getAllRecipes(since: Long, callback: (List<Recipe>) -> Unit) {
+        db.collection(Recipe.COLLECTION)
+            .whereGreaterThan(Recipe.LAST_UPDATED, Timestamp(since, 0))
             .get()
             .addOnSuccessListener { querySnapshot ->
                 val recipes = querySnapshot.documents.mapNotNull { it.data?.let { data -> Recipe.fromJson(data) } }
@@ -76,7 +74,7 @@ class FirebaseModel {
     }
 
     fun addRecipe(recipe: Recipe, callback: (Boolean) -> Unit) {
-        db.collection("recipes")
+        db.collection(Recipe.COLLECTION)
             .document(recipe.id)
             .set(recipe.toJson())
             .addOnCompleteListener { callback(it.isSuccessful) }
