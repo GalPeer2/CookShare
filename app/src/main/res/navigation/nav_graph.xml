@@ -68,7 +68,11 @@
         android:id="@+id/feedFragment"
         android:name="com.example.cookshare.ui.FeedFragment"
         android:label="FeedFragment"
-        tools:layout="@layout/fragment_feed" />
+        tools:layout="@layout/fragment_feed">
+        <action
+            android:id="@+id/action_feedFragment_to_recipeDetailsFragment"
+            app:destination="@id/recipeDetailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/myRecipesFragment"
@@ -112,5 +116,15 @@
         android:name="com.example.cookshare.ui.EditProfileFragment"
         android:label="EditProfileFragment"
         tools:layout="@layout/fragment_edit_profile" />
+
+    <fragment
+        android:id="@+id/recipeDetailsFragment"
+        android:name="com.example.cookshare.ui.RecipeDetailsFragment"
+        android:label="RecipeDetailsFragment"
+        tools:layout="@layout/fragment_recipe_details">
+        <argument
+            android:name="recipeId"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

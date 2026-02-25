@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [User::class, Recipe::class], version = 2)
+@Database(entities = [User::class, Recipe::class], version = 3)
 @TypeConverters(Converters::class)
 abstract class AppLocalDbRepository : RoomDatabase() {
     abstract fun userDao(): UserDao

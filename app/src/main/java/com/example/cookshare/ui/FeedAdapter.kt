@@ -2,6 +2,7 @@ package com.example.cookshare.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cookshare.R
 import com.example.cookshare.databinding.RecipeFeedRowBinding
@@ -33,6 +34,11 @@ class FeedAdapter(
             } else {
                 binding.feedPublisherName.text = "Unknown User"
                 binding.feedPublisherAvatar.setImageResource(R.drawable.ic_launcher_background)
+            }
+
+            binding.root.setOnClickListener {
+                val action = FeedFragmentDirections.actionFeedFragmentToRecipeDetailsFragment(recipe.id)
+                it.findNavController().navigate(action)
             }
         }
     }
