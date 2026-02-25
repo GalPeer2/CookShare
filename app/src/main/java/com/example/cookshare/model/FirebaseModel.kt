@@ -3,14 +3,19 @@ package com.example.cookshare.model
 import android.graphics.Bitmap
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
 
 class FirebaseModel {
 
-    private val db = FirebaseFirestore.getInstance()
-    private val storage = FirebaseStorage.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance().apply {
+        firestoreSettings = FirebaseFirestoreSettings.Builder()
+            .setPersistenceEnabled(false)
+            .build()
+    }
+    private val storage = FirebaseStorage.getInstance()
 
     fun getCurrentUser() = auth.currentUser
 
@@ -19,6 +24,10 @@ class FirebaseModel {
             .document(user.id)
             .set(user.toJson())
             .addOnCompleteListener { callback(it.isSuccessful) }
+    }
+
+    fun updateUser(user: User, callback: (Boolean) -> Unit) {
+        addUser(user, callback)
     }
 
     fun getUser(userId: String, callback: (User?) -> Unit) {

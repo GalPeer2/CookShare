@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -26,6 +28,12 @@ class SignupFragment : Fragment() {
         }
     }
 
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+        bitmap?.let {
+            binding.profileImageSignup.setImageBitmap(it)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,7 +46,7 @@ class SignupFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.profileImageSignup.setOnClickListener {
-            pickImageLauncher.launch("image/*")
+            showImagePickerOptions()
         }
 
         binding.signupButton.setOnClickListener {
@@ -68,6 +76,19 @@ class SignupFragment : Fragment() {
                 viewModel.resetErrorMessage()
             }
         }
+    }
+
+    private fun showImagePickerOptions() {
+        val options = arrayOf("Take Photo", "Choose from Gallery")
+        AlertDialog.Builder(requireContext())
+            .setTitle("Select Profile Image")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> cameraLauncher.launch()
+                    1 -> pickImageLauncher.launch("image/*")
+                }
+            }
+            .show()
     }
 
     override fun onDestroyView() {
