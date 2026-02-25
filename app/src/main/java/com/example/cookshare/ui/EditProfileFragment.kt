@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -23,6 +25,12 @@ class EditProfileFragment : Fragment() {
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
             binding.profileImageEdit.setImageURI(it)
+        }
+    }
+
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+        bitmap?.let {
+            binding.profileImageEdit.setImageBitmap(it)
         }
     }
 
@@ -47,7 +55,7 @@ class EditProfileFragment : Fragment() {
         }
 
         binding.profileImageEdit.setOnClickListener {
-            pickImageLauncher.launch("image/*")
+            showImagePickerOptions()
         }
 
         binding.saveProfileButton.setOnClickListener {
@@ -73,6 +81,19 @@ class EditProfileFragment : Fragment() {
                 viewModel.resetErrorMessage()
             }
         }
+    }
+
+    private fun showImagePickerOptions() {
+        val options = arrayOf("Take Photo", "Choose from Gallery")
+        AlertDialog.Builder(requireContext())
+            .setTitle("Select Profile Image")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> cameraLauncher.launch()
+                    1 -> pickImageLauncher.launch("image/*")
+                }
+            }
+            .show()
     }
 
     override fun onDestroyView() {
