@@ -18,6 +18,7 @@ class FirebaseModel {
     private val storage = FirebaseStorage.getInstance()
 
     fun getCurrentUser() = auth.currentUser
+    fun getCurrentUserId() = auth.currentUser?.uid
 
     fun addUser(user: User, callback: (Boolean) -> Unit) {
         db.collection(User.COLLECTION)
@@ -46,6 +47,10 @@ class FirebaseModel {
 
     fun uploadImage(userId: String, bitmap: Bitmap, callback: (String?) -> Unit) {
         val storageRef = storage.reference.child("profile_images/$userId.jpg")
+        uploadBitmap(storageRef, bitmap, callback)
+    }
+
+    private fun uploadBitmap(storageRef: com.google.firebase.storage.StorageReference, bitmap: Bitmap, callback: (String?) -> Unit) {
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
@@ -57,5 +62,28 @@ class FirebaseModel {
                 }
             }
             .addOnFailureListener { callback(null) }
+    }
+
+    // Recipe operations
+    fun getAllRecipes(callback: (List<Recipe>) -> Unit) {
+        db.collection("recipes")
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val recipes = querySnapshot.documents.mapNotNull { it.data?.let { data -> Recipe.fromJson(data) } }
+                callback(recipes)
+            }
+            .addOnFailureListener { callback(emptyList()) }
+    }
+
+    fun addRecipe(recipe: Recipe, callback: (Boolean) -> Unit) {
+        db.collection("recipes")
+            .document(recipe.id)
+            .set(recipe.toJson())
+            .addOnCompleteListener { callback(it.isSuccessful) }
+    }
+
+    fun uploadRecipeImage(recipeId: String, bitmap: Bitmap, callback: (String?) -> Unit) {
+        val storageRef = storage.reference.child("recipe_images/$recipeId.jpg")
+        uploadBitmap(storageRef, bitmap, callback)
     }
 }

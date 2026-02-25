@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.firebase.storage.ktx)
 
     implementation(libs.picasso)
+    implementation(libs.gson)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
