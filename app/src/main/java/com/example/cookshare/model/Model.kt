@@ -76,11 +76,11 @@ class Model private constructor(context: Context) {
                                 mainHandler.post { callback(true) }
                             }
                         } else {
-                            callback(false)
+                            mainHandler.post { callback(false) }
                         }
                     }
                 } else {
-                    callback(false)
+                    mainHandler.post { callback(false) }
                 }
             }
         } else {
@@ -113,7 +113,7 @@ class Model private constructor(context: Context) {
                         }
                     }
                 } else {
-                    callback(false)
+                    mainHandler.post { callback(false) }
                 }
             }
         } else {
@@ -171,6 +171,10 @@ class Model private constructor(context: Context) {
     }
 
     fun uploadRecipeImage(recipeId: String, bitmap: Bitmap, callback: (String?) -> Unit) {
-        firebaseModel.uploadRecipeImage(recipeId, bitmap, callback)
+        firebaseModel.uploadRecipeImage(recipeId, bitmap) { url ->
+            mainHandler.post {
+                callback(url)
+            }
+        }
     }
 }

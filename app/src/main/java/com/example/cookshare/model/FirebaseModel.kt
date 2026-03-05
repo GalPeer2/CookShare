@@ -1,6 +1,7 @@
 package com.example.cookshare.model
 
 import android.graphics.Bitmap
+import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -16,7 +17,9 @@ class FirebaseModel {
             .setPersistenceEnabled(false) // Disable Firebase local persistence as per requirements
             .build()
     }
-    private val storage = FirebaseStorage.getInstance()
+    // Explicitly initialize with the bucket from google-services.json to avoid "Object does not exist at location"
+    // when the default bucket might not be correctly resolved or when using newer Firebase versions.
+    private val storage = FirebaseStorage.getInstance("gs://cookshare-1e135.firebasestorage.app")
 
     fun getCurrentUser() = auth.currentUser
     fun getCurrentUserId() = auth.currentUser?.uid
@@ -49,16 +52,25 @@ class FirebaseModel {
 
     private fun uploadBitmap(storageRef: com.google.firebase.storage.StorageReference, bitmap: Bitmap, callback: (String?) -> Unit) {
         val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos) // Compressed for better upload performance
         val data = baos.toByteArray()
+
+        Log.d("FirebaseModel", "Starting upload to: ${storageRef.path}")
 
         storageRef.putBytes(data)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { uri ->
+                    Log.d("FirebaseModel", "Upload success. URL: ${uri}")
                     callback(uri.toString())
+                }.addOnFailureListener {
+                    Log.e("FirebaseModel", "Failed to get download URL", it)
+                    callback(null)
                 }
             }
-            .addOnFailureListener { callback(null) }
+            .addOnFailureListener {
+                Log.e("FirebaseModel", "Upload failed", it)
+                callback(null)
+            }
     }
 
     // Recipe operations

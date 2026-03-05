@@ -3,6 +3,7 @@ package com.example.cookshare.ui
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cookshare.R
 import com.example.cookshare.databinding.RecipeRowBinding
 import com.example.cookshare.model.Recipe
 import com.squareup.picasso.Picasso
@@ -19,7 +20,13 @@ class RecipesAdapter(
         fun bind(recipe: Recipe) {
             binding.recipeNameRow.text = recipe.name
             if (recipe.pictureUrl.isNotEmpty()) {
-                Picasso.get().load(recipe.pictureUrl).into(binding.recipeImageRow)
+                Picasso.get()
+                    .load(recipe.pictureUrl)
+                    .placeholder(R.drawable.ic_chef_hat)
+                    .error(R.drawable.ic_chef_hat)
+                    .into(binding.recipeImageRow)
+            } else {
+                binding.recipeImageRow.setImageResource(R.drawable.ic_chef_hat)
             }
             binding.editRecipeButton.setOnClickListener {
                 onEditClick(recipe)
