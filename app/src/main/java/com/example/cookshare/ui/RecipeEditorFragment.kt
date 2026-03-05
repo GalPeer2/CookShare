@@ -2,14 +2,15 @@ package com.example.cookshare.ui
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -17,6 +18,7 @@ import com.example.cookshare.databinding.FragmentRecipeEditorBinding
 import com.example.cookshare.model.Model
 import com.example.cookshare.model.Recipe
 import com.squareup.picasso.Picasso
+import java.io.File
 import java.util.*
 
 class RecipeEditorFragment : Fragment() {
@@ -26,13 +28,18 @@ class RecipeEditorFragment : Fragment() {
     private val args: RecipeEditorFragmentArgs by navArgs()
     private var isEditMode = false
     private var existingRecipe: Recipe? = null
+    private var latestTmpUri: Uri? = null
 
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let { binding.recipeImageEditor.setImageURI(it) }
     }
 
-    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
-        bitmap?.let { binding.recipeImageEditor.setImageBitmap(it) }
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            latestTmpUri?.let { uri ->
+                binding.recipeImageEditor.setImageURI(uri)
+            }
+        }
     }
 
     override fun onCreateView(
@@ -133,11 +140,27 @@ class RecipeEditorFragment : Fragment() {
             .setTitle("Select Recipe Image")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> cameraLauncher.launch()
+                    0 -> takePhoto()
                     1 -> pickImageLauncher.launch("image/*")
                 }
             }
             .show()
+    }
+
+    private fun takePhoto() {
+        getTmpFileUri().let { uri ->
+            latestTmpUri = uri
+            cameraLauncher.launch(uri)
+        }
+    }
+
+    private fun getTmpFileUri(): Uri {
+        val tmpFile = File.createTempFile("tmp_image_file", ".png", requireContext().cacheDir).apply {
+            createNewFile()
+            deleteOnExit()
+        }
+
+        return FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", tmpFile)
     }
 
     override fun onDestroyView() {

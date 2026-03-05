@@ -21,19 +21,29 @@ class FeedAdapter(
             binding.feedLikesCount.text = recipe.likedBy.size.toString()
 
             if (recipe.pictureUrl.isNotEmpty()) {
-                Picasso.get().load(recipe.pictureUrl).into(binding.feedRecipeImage)
+                Picasso.get()
+                    .load(recipe.pictureUrl)
+                    .placeholder(R.drawable.ic_chef_hat)
+                    .error(R.drawable.ic_chef_hat)
+                    .into(binding.feedRecipeImage)
+            } else {
+                binding.feedRecipeImage.setImageResource(R.drawable.ic_chef_hat)
             }
 
             if (user != null) {
                 binding.feedPublisherName.text = user.name
                 if (user.profileImageUrl.isNotEmpty()) {
-                    Picasso.get().load(user.profileImageUrl).into(binding.feedPublisherAvatar)
+                    Picasso.get()
+                        .load(user.profileImageUrl)
+                        .placeholder(R.drawable.ic_person)
+                        .error(R.drawable.ic_person)
+                        .into(binding.feedPublisherAvatar)
                 } else {
-                    binding.feedPublisherAvatar.setImageResource(R.drawable.ic_launcher_background)
+                    binding.feedPublisherAvatar.setImageResource(R.drawable.ic_person)
                 }
             } else {
                 binding.feedPublisherName.text = "Unknown User"
-                binding.feedPublisherAvatar.setImageResource(R.drawable.ic_launcher_background)
+                binding.feedPublisherAvatar.setImageResource(R.drawable.ic_person)
             }
 
             binding.root.setOnClickListener {
@@ -43,10 +53,6 @@ class FeedAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
-        val binding = RecipeFeedRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FeedViewHolder(binding)
-    }
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
         holder.bind(recipes[position])
@@ -57,5 +63,10 @@ class FeedAdapter(
     fun updateRecipes(newRecipes: List<RecipeWithUser>) {
         recipes = newRecipes
         notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
+        val binding = RecipeFeedRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return FeedViewHolder(binding)
     }
 }

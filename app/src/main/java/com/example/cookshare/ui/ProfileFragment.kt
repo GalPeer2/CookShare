@@ -34,7 +34,13 @@ class ProfileFragment : Fragment() {
                 binding.profileName.text = it.name
                 binding.profileEmail.text = it.email
                 if (it.profileImageUrl.isNotEmpty()) {
-                    Picasso.get().load(it.profileImageUrl).into(binding.profileImage)
+                    Picasso.get()
+                        .load(it.profileImageUrl)
+                        .placeholder(R.drawable.ic_person)
+                        .error(R.drawable.ic_person)
+                        .into(binding.profileImage)
+                } else {
+                    binding.profileImage.setImageResource(R.drawable.ic_person)
                 }
             }
         }

@@ -39,7 +39,13 @@ class RecipeDetailsFragment : Fragment() {
             user?.let {
                 binding.recipeDetailsPublisherName.text = it.name
                 if (it.profileImageUrl.isNotEmpty()) {
-                    Picasso.get().load(it.profileImageUrl).into(binding.recipeDetailsPublisherImage)
+                    Picasso.get()
+                        .load(it.profileImageUrl)
+                        .placeholder(R.drawable.ic_person)
+                        .error(R.drawable.ic_person)
+                        .into(binding.recipeDetailsPublisherImage)
+                } else {
+                    binding.recipeDetailsPublisherImage.setImageResource(R.drawable.ic_person)
                 }
             }
         }
@@ -50,7 +56,13 @@ class RecipeDetailsFragment : Fragment() {
         binding.recipeDetailsShortDescription.text = recipe.shortDescription
         binding.recipeDetailsInstructions.text = recipe.instructions
         if (recipe.pictureUrl.isNotEmpty()) {
-            Picasso.get().load(recipe.pictureUrl).into(binding.recipeDetailsImage)
+            Picasso.get()
+                .load(recipe.pictureUrl)
+                .placeholder(R.drawable.ic_chef_hat)
+                .error(R.drawable.ic_chef_hat)
+                .into(binding.recipeDetailsImage)
+        } else {
+            binding.recipeDetailsImage.setImageResource(R.drawable.ic_chef_hat)
         }
 
         val currentUser = Model.instance.getCurrentUser()
