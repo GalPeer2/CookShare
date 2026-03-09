@@ -142,9 +142,12 @@ class Model private constructor(context: Context) {
 
     fun refreshAllRecipes() {
         recipesLoadingState.value = LoadingState.LOADING
-        
+
+
         executor.execute {
+//            database.recipeDao().deleteAll()
             val lastUpdated = database.recipeDao().getMaxLastUpdated()
+
             
             firebaseModel.getAllRecipes(lastUpdated) { recipes ->
                 executor.execute {
@@ -158,6 +161,8 @@ class Model private constructor(context: Context) {
             }
         }
     }
+
+
 
     fun addRecipe(recipe: Recipe, callback: (Boolean) -> Unit) {
         firebaseModel.addRecipe(recipe) { success ->

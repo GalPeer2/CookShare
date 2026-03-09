@@ -17,37 +17,51 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
     
     private val _sortOrder = MutableLiveData("newest")
     
-    private val _recipeWithUsersList = MediatorLiveData<List<RecipeWithUser>>()
+    // We use a single MediatorLiveData for the final output
     val orderedRecipes = MediatorLiveData<List<RecipeWithUser>>()
+    
+    // Track which user IDs we are currently observing to avoid duplicate sources
+    private val observedUserIds = mutableSetOf<String>()
 
     init {
-        _recipeWithUsersList.addSource(recipes) { recipesList ->
-            combine(recipesList, _sortOrder.value ?: "newest")
+        // Trigger update when the list of recipes changes
+        orderedRecipes.addSource(recipes) {
+            updateList()
         }
         
-        orderedRecipes.addSource(_recipeWithUsersList) { list ->
-            orderedRecipes.value = sortList(list, _sortOrder.value ?: "newest")
-        }
-        
-        orderedRecipes.addSource(_sortOrder) { order ->
-            orderedRecipes.value = sortList(_recipeWithUsersList.value ?: emptyList(), order)
+        // Trigger update when sort order changes
+        orderedRecipes.addSource(_sortOrder) {
+            updateList()
         }
     }
 
-    private fun combine(recipesList: List<Recipe>, order: String) {
-        val currentList = mutableListOf<RecipeWithUser>()
-        recipesList.forEach { recipe ->
-            val userLiveData = model.getUserById(recipe.userId)
-            _recipeWithUsersList.addSource(userLiveData) { user ->
-                val index = currentList.indexOfFirst { it.recipe.id == recipe.id }
-                if (index != -1) {
-                    currentList[index] = RecipeWithUser(recipe, user)
-                } else {
-                    currentList.add(RecipeWithUser(recipe, user))
+    private fun updateList() {
+        val currentRecipes = recipes.value ?: return
+        val currentOrder = _sortOrder.value ?: "newest"
+        
+        // Ensure we are observing every user needed for the current recipes
+        currentRecipes.forEach { recipe ->
+            if (!observedUserIds.contains(recipe.userId)) {
+                observedUserIds.add(recipe.userId)
+                val userLiveData = model.getUserById(recipe.userId)
+                orderedRecipes.addSource(userLiveData) {
+                    // When any user data updates, we refresh the whole list
+                    updateList()
                 }
-                _recipeWithUsersList.value = currentList
             }
         }
+
+        // Create the combined list using currently available data in the model/cache
+        // Note: getUserById from Room returns a LiveData, but here we just need to 
+        // trigger the UI to refresh. Since updateList is called whenever any 
+        // source changes, the UI will stay in sync.
+        val listWithUsers = currentRecipes.map { recipe ->
+            // We fetch the user by ID. Since getUserById is observing, 
+            // the value will eventually be populated.
+            RecipeWithUser(recipe, model.getUserById(recipe.userId).value)
+        }
+
+        orderedRecipes.value = sortList(listWithUsers, currentOrder)
     }
 
     private fun sortList(list: List<RecipeWithUser>, order: String): List<RecipeWithUser> {
@@ -59,6 +73,8 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun setOrder(order: String) {
-        _sortOrder.value = order
+        if (_sortOrder.value != order) {
+            _sortOrder.value = order
+        }
     }
 }
