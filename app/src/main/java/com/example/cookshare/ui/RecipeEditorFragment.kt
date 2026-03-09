@@ -102,12 +102,14 @@ class RecipeEditorFragment : Fragment() {
 
         val recipe = existingRecipe ?: Recipe(
             id = UUID.randomUUID().toString(),
-            userId = Model.instance.getCurrentUserId() ?: ""
+            userId = Model.instance.getCurrentUserId() ?: "",
+            createdAt = System.currentTimeMillis()
         )
         
         recipe.name = name
         recipe.shortDescription = description
         recipe.instructions = instructions
+
 
         val bitmap = (binding.recipeImageEditor.drawable as? BitmapDrawable)?.bitmap
 

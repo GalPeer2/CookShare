@@ -82,6 +82,9 @@
         <action
             android:id="@+id/action_myRecipesFragment_to_recipeEditorFragment"
             app:destination="@id/recipeEditorFragment" />
+        <action
+            android:id="@+id/action_myRecipesFragment_to_recipeDetailsFragment"
+            app:destination="@id/recipeDetailsFragment" />
     </fragment>
 
     <fragment

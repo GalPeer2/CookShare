@@ -21,6 +21,9 @@ interface RecipeDao {
     @Delete
     fun delete(recipe: Recipe)
 
+    @Query("DELETE FROM recipe")
+    fun deleteAll()
+
     @Query("SELECT MAX(lastUpdated) FROM recipe")
     fun getMaxLastUpdated(): Long
 }

@@ -25,14 +25,27 @@ data class Recipe(
         fun fromJson(json: Map<String, Any>): Recipe {
             val recipe = Recipe()
             recipe.id = json["id"] as? String ?: ""
-            recipe.createdAt = (json["createdAt"] as? Timestamp)?.seconds ?: 0
+            
+            // Handle createdAt: could be Long (from toJson) or Timestamp
+            recipe.createdAt = when (val createdAt = json["createdAt"]) {
+                is Long -> createdAt
+                is Timestamp -> createdAt.seconds * 1000 // Convert to millis if needed
+                else -> 0L
+            }
+            
             recipe.userId = json["userId"] as? String ?: ""
             recipe.name = json["name"] as? String ?: ""
             recipe.shortDescription = json["shortDescription"] as? String ?: ""
             recipe.instructions = json["instructions"] as? String ?: ""
             recipe.pictureUrl = json["pictureUrl"] as? String ?: ""
             recipe.likedBy = json["likedBy"] as? List<String> ?: emptyList()
-            recipe.lastUpdated = json[LAST_UPDATED] as? Long ?: 0
+            
+            // Handle lastUpdated: usually a Timestamp because of serverTimestamp()
+            recipe.lastUpdated = when (val lastUpdated = json[LAST_UPDATED]) {
+                is Long -> lastUpdated
+                is Timestamp -> lastUpdated.seconds
+                else -> 0L
+            }
             return recipe
         }
     }
@@ -40,7 +53,7 @@ data class Recipe(
     fun toJson(): Map<String, Any> {
         return mapOf(
             "id" to id,
-            "createdAt" to createdAt, // Use stored value or FieldValue.serverTimestamp() when creating
+            "createdAt" to createdAt,
             "userId" to userId,
             "name" to name,
             "shortDescription" to shortDescription,
