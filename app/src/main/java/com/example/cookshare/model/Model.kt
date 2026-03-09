@@ -42,7 +42,7 @@ class Model private constructor(context: Context) {
     fun getCurrentUserId() = firebaseModel.getCurrentUserId()
 
     fun getUserById(id: String): LiveData<User?> {
-        // Return LiveData from DB immediately. refreshUser will update it when done.
+        refreshUser(id)
         return database.userDao().getUserById(id)
     }
 
