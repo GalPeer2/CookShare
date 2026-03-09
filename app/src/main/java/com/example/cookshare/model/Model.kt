@@ -42,24 +42,20 @@ class Model private constructor(context: Context) {
     fun getCurrentUserId() = firebaseModel.getCurrentUserId()
 
     fun getUserById(id: String): LiveData<User?> {
-        refreshUser(id)
+        // Return LiveData from DB immediately. refreshUser will update it when done.
         return database.userDao().getUserById(id)
     }
 
-    private fun refreshUser(id: String) {
-        userLoadingState.value = LoadingState.LOADING
+    fun refreshUser(id: String) {
+        userLoadingState.postValue(LoadingState.LOADING)
         firebaseModel.getUser(id) { user ->
             if (user != null) {
                 executor.execute {
                     database.userDao().insert(user)
-                    mainHandler.post {
-                        userLoadingState.value = LoadingState.LOADED
-                    }
+                    userLoadingState.postValue(LoadingState.LOADED)
                 }
             } else {
-                mainHandler.post {
-                    userLoadingState.value = LoadingState.ERROR
-                }
+                userLoadingState.postValue(LoadingState.ERROR)
             }
         }
     }
@@ -141,28 +137,46 @@ class Model private constructor(context: Context) {
     }
 
     fun refreshAllRecipes() {
-        recipesLoadingState.value = LoadingState.LOADING
+        if (recipesLoadingState.value == LoadingState.LOADING) return
 
-
+        recipesLoadingState.postValue(LoadingState.LOADING)
+        
         executor.execute {
-//            database.recipeDao().deleteAll()
-            val lastUpdated = database.recipeDao().getMaxLastUpdated()
-
+            val lastUpdated = try {
+                database.recipeDao().getMaxLastUpdated()
+            } catch (e: Exception) {
+                0L
+            }
             
             firebaseModel.getAllRecipes(lastUpdated) { recipes ->
-                executor.execute {
-                    if (recipes.isNotEmpty()) {
+                if (recipes.isNotEmpty()) {
+                    executor.execute {
                         database.recipeDao().insert(*recipes.toTypedArray())
+                        recipesLoadingState.postValue(LoadingState.LOADED)
                     }
-                    mainHandler.post {
-                        recipesLoadingState.value = LoadingState.LOADED
-                    }
+                } else {
+                    recipesLoadingState.postValue(LoadingState.LOADED)
                 }
             }
         }
     }
 
-
+    fun clearAndFetchAllRecipes() {
+        recipesLoadingState.postValue(LoadingState.LOADING)
+        executor.execute {
+            database.recipeDao().deleteAll()
+            firebaseModel.getAllRecipes(0) { recipes ->
+                if (recipes.isNotEmpty()) {
+                    executor.execute {
+                        database.recipeDao().insert(*recipes.toTypedArray())
+                        recipesLoadingState.postValue(LoadingState.LOADED)
+                    }
+                } else {
+                    recipesLoadingState.postValue(LoadingState.LOADED)
+                }
+            }
+        }
+    }
 
     fun addRecipe(recipe: Recipe, callback: (Boolean) -> Unit) {
         firebaseModel.addRecipe(recipe) { success ->
