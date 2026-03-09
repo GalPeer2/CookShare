@@ -46,7 +46,7 @@ class FeedAdapter(
                 binding.feedPublisherAvatar.setImageResource(R.drawable.ic_person)
             }
 
-            // Set listener on the specific container instead of root to ensure it catches clicks
+            // Set listener on root to ensure it catches clicks
             binding.root.setOnClickListener {
                 binding.feedPublisherName.text = "fffffff User"
                 val action = FeedFragmentDirections.actionFeedFragmentToRecipeDetailsFragment(recipe.id)
