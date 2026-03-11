@@ -46,9 +46,8 @@ class FeedAdapter(
                 binding.feedPublisherAvatar.setImageResource(R.drawable.ic_person)
             }
 
-            // Set listener on root to ensure it catches clicks
+            // Set listener on the root (CardView) to ensure the entire card is clickable
             binding.root.setOnClickListener {
-                binding.feedPublisherName.text = "fffffff User"
                 val action = FeedFragmentDirections.actionFeedFragmentToRecipeDetailsFragment(recipe.id)
                 it.findNavController().navigate(action)
             }
