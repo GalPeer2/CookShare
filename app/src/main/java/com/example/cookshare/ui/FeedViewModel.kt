@@ -19,7 +19,8 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
     
     val orderedRecipes = MediatorLiveData<List<RecipeWithUser>>()
     
-    private val observedUserIds = mutableSetOf<String>()
+    // Cache LiveData instances to avoid redundant database calls and null values
+    private val userLiveDatas = mutableMapOf<String, LiveData<User?>>()
 
     init {
         orderedRecipes.addSource(recipes) {
@@ -36,9 +37,9 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
         val currentOrder = _sortOrder.value ?: "newest"
         
         currentRecipes.forEach { recipe ->
-            if (!observedUserIds.contains(recipe.userId)) {
-                observedUserIds.add(recipe.userId)
+            if (!userLiveDatas.containsKey(recipe.userId)) {
                 val userLiveData = model.getUserById(recipe.userId)
+                userLiveDatas[recipe.userId] = userLiveData
                 orderedRecipes.addSource(userLiveData) {
                     updateList()
                 }
@@ -46,7 +47,9 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         val listWithUsers = currentRecipes.map { recipe ->
-            RecipeWithUser(recipe, model.getUserById(recipe.userId).value)
+            // Use the cached LiveData instance
+            val user = userLiveDatas[recipe.userId]?.value
+            RecipeWithUser(recipe, user)
         }
 
         orderedRecipes.value = sortList(listWithUsers, currentOrder)
