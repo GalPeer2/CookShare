@@ -8,9 +8,15 @@
 
     <style name="Theme.CookShare" parent="Base.Theme.CookShare" />
 
-    <!-- Style for circular images using ShapeableImageView -->
+    <!-- Style for circular images -->
     <style name="CircleImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Style for rounded square images -->
+    <style name="RoundedSquareImage" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
     </style>
 </resources>

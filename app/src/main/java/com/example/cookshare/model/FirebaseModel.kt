@@ -92,6 +92,13 @@ class FirebaseModel {
             .addOnCompleteListener { callback(it.isSuccessful) }
     }
 
+    fun deleteRecipe(recipeId: String, callback: (Boolean) -> Unit) {
+        db.collection(Recipe.COLLECTION)
+            .document(recipeId)
+            .delete()
+            .addOnCompleteListener { callback(it.isSuccessful) }
+    }
+
     fun uploadRecipeImage(recipeId: String, bitmap: Bitmap, callback: (String?) -> Unit) {
         val storageRef = storage.reference.child("recipe_images/$recipeId.jpg")
         uploadBitmap(storageRef, bitmap, callback)

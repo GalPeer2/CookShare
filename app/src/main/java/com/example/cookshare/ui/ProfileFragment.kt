@@ -49,7 +49,7 @@ class ProfileFragment : Fragment() {
             binding.progressBar.visibility = if (state == Model.LoadingState.LOADING) View.VISIBLE else View.GONE
         }
 
-        binding.editProfileButton.setOnClickListener {
+        binding.editProfileFab.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_editProfileFragment)
         }
 
