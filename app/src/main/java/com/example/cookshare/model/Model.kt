@@ -139,6 +139,10 @@ class Model private constructor(context: Context) {
         return database.recipeDao().getRecipeById(id)
     }
 
+    fun getRecipesByUserId(userId: String): LiveData<List<Recipe>> {
+        return database.recipeDao().getRecipesByUserId(userId)
+    }
+
     fun refreshAllRecipes() {
         if (recipesLoadingState.value == LoadingState.LOADING) return
 
