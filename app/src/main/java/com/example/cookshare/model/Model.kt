@@ -196,6 +196,19 @@ class Model private constructor(context: Context) {
         }
     }
 
+    fun deleteRecipe(recipe: Recipe, callback: (Boolean) -> Unit) {
+        firebaseModel.deleteRecipe(recipe.id) { success ->
+            if (success) {
+                executor.execute {
+                    database.recipeDao().delete(recipe)
+                    mainHandler.post { callback(true) }
+                }
+            } else {
+                mainHandler.post { callback(false) }
+            }
+        }
+    }
+
     fun uploadRecipeImage(recipeId: String, bitmap: Bitmap, callback: (String?) -> Unit) {
         firebaseModel.uploadRecipeImage(recipeId, bitmap) { url ->
             if (url != null) {
