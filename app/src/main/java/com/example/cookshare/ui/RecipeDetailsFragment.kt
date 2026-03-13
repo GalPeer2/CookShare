@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.cookshare.R
 import com.example.cookshare.databinding.FragmentRecipeDetailsBinding
@@ -30,6 +31,10 @@ class RecipeDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.backButton.setOnClickListener {
+            findNavController().navigateUp()
+        }
 
         viewModel.recipe.observe(viewLifecycleOwner) { recipe ->
             recipe?.let { updateUi(it) }
@@ -75,7 +80,7 @@ class RecipeDetailsFragment : Fragment() {
 
         val currentUser = Model.instance.getCurrentUser()
         val isLiked = currentUser?.let { recipe.likedBy.contains(it.uid) } ?: false
-        binding.recipeDetailsLikeButton.setImageResource(if (isLiked) R.drawable.ic_like_selected else R.drawable.ic_like_unselected)
+        binding.recipeDetailsLikeButton.setIconResource(if (isLiked) R.drawable.ic_like_selected else R.drawable.ic_like_unselected)
 
         binding.recipeDetailsLikeButton.setOnClickListener {
             viewModel.toggleLike(recipe)
