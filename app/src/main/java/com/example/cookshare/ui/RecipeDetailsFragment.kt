@@ -38,7 +38,11 @@ class RecipeDetailsFragment : Fragment() {
         viewModel.user.observe(viewLifecycleOwner) { user ->
             user?.let {
                 binding.recipeDetailsPublisherName.text = it.name
-                if (it.profileImageUrl.isNotEmpty()) {
+                
+                val localUserImage = Model.instance.getLocalImage("${it.id}.jpg")
+                if (localUserImage != null) {
+                    Picasso.get().load(localUserImage).placeholder(R.drawable.ic_person).into(binding.recipeDetailsPublisherImage)
+                } else if (it.profileImageUrl.isNotEmpty()) {
                     Picasso.get()
                         .load(it.profileImageUrl)
                         .placeholder(R.drawable.ic_person)
@@ -55,14 +59,18 @@ class RecipeDetailsFragment : Fragment() {
         binding.recipeDetailsName.text = recipe.name
         binding.recipeDetailsShortDescription.text = recipe.shortDescription
         binding.recipeDetailsInstructions.text = recipe.instructions
-        if (recipe.pictureUrl.isNotEmpty()) {
+        
+        val localRecipeImage = Model.instance.getLocalImage("${recipe.id}.jpg")
+        if (localRecipeImage != null) {
+            Picasso.get().load(localRecipeImage).placeholder(R.drawable.recipe_placeholder).into(binding.recipeDetailsImage)
+        } else if (recipe.pictureUrl.isNotEmpty()) {
             Picasso.get()
                 .load(recipe.pictureUrl)
-                .placeholder(R.drawable.ic_chef_hat)
-                .error(R.drawable.ic_chef_hat)
+                .placeholder(R.drawable.recipe_placeholder)
+                .error(R.drawable.recipe_placeholder)
                 .into(binding.recipeDetailsImage)
         } else {
-            binding.recipeDetailsImage.setImageResource(R.drawable.ic_chef_hat)
+            binding.recipeDetailsImage.setImageResource(R.drawable.recipe_placeholder)
         }
 
         val currentUser = Model.instance.getCurrentUser()
