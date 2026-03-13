@@ -68,7 +68,7 @@ class RecipeEditorFragment : Fragment() {
             isEditMode = false
             binding.recipeEditorHeader.text = "Create Recipe"
             binding.deleteRecipeButton.visibility = View.GONE
-            binding.recipeDisplayName.text = "New\nRecipe"
+            binding.recipeDisplayName.text = "New Recipe"
         }
 
         binding.backButton.setOnClickListener {
@@ -94,7 +94,7 @@ class RecipeEditorFragment : Fragment() {
         binding.recipeNameEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.recipeDisplayName.text = s?.toString()?.replace(" ", "\n") ?: ""
+                binding.recipeDisplayName.text = s?.toString() ?: ""
             }
             override fun afterTextChanged(s: Editable?) {}
         })
@@ -107,7 +107,7 @@ class RecipeEditorFragment : Fragment() {
             if (recipe != null) {
                 existingRecipe = recipe
                 binding.recipeNameEditText.setText(recipe.name)
-                binding.recipeDisplayName.text = recipe.name.replace(" ", "\n")
+                binding.recipeDisplayName.text = recipe.name
                 binding.recipeDescriptionEditText.setText(recipe.shortDescription)
                 binding.recipeInstructionsEditText.setText(recipe.instructions)
                 if (recipe.pictureUrl.isNotEmpty()) {
