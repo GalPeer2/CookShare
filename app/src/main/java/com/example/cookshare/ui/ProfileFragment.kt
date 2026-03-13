@@ -49,6 +49,14 @@ class ProfileFragment : Fragment() {
             binding.progressBar.visibility = if (state == Model.LoadingState.LOADING) View.VISIBLE else View.GONE
         }
 
+        viewModel.recipeCount.observe(viewLifecycleOwner) { count ->
+            binding.recipesCountText.text = count.toString()
+        }
+
+        viewModel.totalLikes.observe(viewLifecycleOwner) { likes ->
+            binding.likesCountText.text = likes.toString()
+        }
+
         binding.editProfileFab.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_editProfileFragment)
         }
