@@ -22,11 +22,11 @@ class RecipesAdapter(
             if (recipe.pictureUrl.isNotEmpty()) {
                 Picasso.get()
                     .load(recipe.pictureUrl)
-                    .placeholder(R.drawable.ic_chef_hat)
-                    .error(R.drawable.ic_chef_hat)
+                    .placeholder(R.drawable.recipe_placeholder)
+                    .error(R.drawable.recipe_placeholder)
                     .into(binding.recipeImageRow)
             } else {
-                binding.recipeImageRow.setImageResource(R.drawable.ic_chef_hat)
+                binding.recipeImageRow.setImageResource(R.drawable.recipe_placeholder)
             }
             binding.editRecipeButton.setOnClickListener {
                 onEditClick(recipe)

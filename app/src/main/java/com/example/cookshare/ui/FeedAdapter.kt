@@ -6,6 +6,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cookshare.R
 import com.example.cookshare.databinding.RecipeFeedRowBinding
+import com.example.cookshare.model.Model
 import com.squareup.picasso.Picasso
 
 class FeedAdapter(
@@ -20,19 +21,25 @@ class FeedAdapter(
             binding.feedRecipeDescription.text = recipe.shortDescription
             binding.feedLikesCount.text = recipe.likedBy.size.toString()
 
-            if (recipe.pictureUrl.isNotEmpty()) {
+            val localRecipeImage = Model.instance.getLocalImage("${recipe.id}.jpg")
+            if (localRecipeImage != null) {
+                Picasso.get().load(localRecipeImage).placeholder(R.drawable.recipe_placeholder).into(binding.feedRecipeImage)
+            } else if (recipe.pictureUrl.isNotEmpty()) {
                 Picasso.get()
                     .load(recipe.pictureUrl)
-                    .placeholder(R.drawable.ic_chef_hat)
-                    .error(R.drawable.ic_chef_hat)
+                    .placeholder(R.drawable.recipe_placeholder)
+                    .error(R.drawable.recipe_placeholder)
                     .into(binding.feedRecipeImage)
             } else {
-                binding.feedRecipeImage.setImageResource(R.drawable.ic_chef_hat)
+                binding.feedRecipeImage.setImageResource(R.drawable.recipe_placeholder)
             }
 
             if (user != null) {
                 binding.feedPublisherName.text = user.name
-                if (user.profileImageUrl.isNotEmpty()) {
+                val localUserImage = Model.instance.getLocalImage("${user.id}.jpg")
+                if (localUserImage != null) {
+                    Picasso.get().load(localUserImage).placeholder(R.drawable.ic_person).into(binding.feedPublisherAvatar)
+                } else if (user.profileImageUrl.isNotEmpty()) {
                     Picasso.get()
                         .load(user.profileImageUrl)
                         .placeholder(R.drawable.ic_person)
@@ -46,7 +53,6 @@ class FeedAdapter(
                 binding.feedPublisherAvatar.setImageResource(R.drawable.ic_person)
             }
 
-            // Set listener on the root (CardView) to ensure the entire card is clickable
             binding.root.setOnClickListener {
                 val action = FeedFragmentDirections.actionFeedFragmentToRecipeDetailsFragment(recipe.id)
                 it.findNavController().navigate(action)

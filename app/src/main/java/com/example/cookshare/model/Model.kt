@@ -12,6 +12,7 @@ class Model private constructor(context: Context) {
 
     private val database = AppLocalDb.getDatabase(context)
     private val firebaseModel = FirebaseModel()
+    private val localStore = LocalStore(context)
     private val executor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
 
@@ -68,6 +69,7 @@ class Model private constructor(context: Context) {
                     firebaseModel.addUser(userWithImage) { success ->
                         if (success) {
                             executor.execute {
+                                localStore.saveImage(bitmap, "${user.id}.jpg")
                                 database.userDao().insert(userWithImage)
                                 mainHandler.post { callback(true) }
                             }
@@ -101,6 +103,7 @@ class Model private constructor(context: Context) {
                     firebaseModel.addUser(userWithImage) { success ->
                         if (success) {
                             executor.execute {
+                                localStore.saveImage(bitmap, "${user.id}.jpg")
                                 database.userDao().insert(userWithImage)
                                 mainHandler.post { callback(true) }
                             }
@@ -191,9 +194,18 @@ class Model private constructor(context: Context) {
 
     fun uploadRecipeImage(recipeId: String, bitmap: Bitmap, callback: (String?) -> Unit) {
         firebaseModel.uploadRecipeImage(recipeId, bitmap) { url ->
-            mainHandler.post {
-                callback(url)
+            if (url != null) {
+                executor.execute {
+                    localStore.saveImage(bitmap, "${recipeId}.jpg")
+                    mainHandler.post { callback(url) }
+                }
+            } else {
+                mainHandler.post { callback(null) }
             }
         }
+    }
+    
+    fun getLocalImage(imageName: String): String? {
+        return localStore.getLocalImageUrl(imageName)
     }
 }
