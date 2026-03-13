@@ -29,14 +29,14 @@
             android:id="@+id/recipe_editor_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit Recipe"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Edit Recipe" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/save_recipe_button"
