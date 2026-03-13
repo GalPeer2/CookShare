@@ -67,6 +67,10 @@ class SignupFragment : Fragment() {
             viewModel.signup(email, password, name, bitmap)
         }
 
+        binding.loginRedirect.setOnClickListener {
+            findNavController().navigate(R.id.action_signupFragment_to_loginFragment)
+        }
+
         viewModel.signupResult.observe(viewLifecycleOwner) { success ->
             if (success) {
                 findNavController().navigate(R.id.action_signupFragment_to_profileFragment)
