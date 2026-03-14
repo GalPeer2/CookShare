@@ -12,22 +12,28 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Edit Profile"
+        android:textColor="@color/text_dark"
         android:textSize="32sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profile_image_edit"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginTop="32dp"
+        android:background="#E0E0E0"
+        android:padding="4dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_background"
+        android:src="@drawable/ic_camera"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edit_profile_title" />
+        app:layout_constraintTop_toBottomOf="@id/edit_profile_title"
+        app:shapeAppearanceOverlay="@style/CircleImageView"
+        app:strokeColor="#BDBDBD"
+        app:strokeWidth="1dp" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/name_layout_edit"
@@ -50,9 +56,13 @@
     <Button
         android:id="@+id/save_profile_button"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="32dp"
+        android:backgroundTint="@color/primary_orange"
         android:text="Save Changes"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        app:cornerRadius="28dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/name_layout_edit" />
