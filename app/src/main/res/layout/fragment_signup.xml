@@ -10,7 +10,7 @@
         android:id="@+id/signup_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="32dp"
         android:text="Sign Up"
         android:textColor="@color/text_dark"
         android:textSize="36sp"
@@ -19,16 +19,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/profile_image_signup"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="24dp"
+        android:background="#E0E0E0"
+        android:padding="2dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_camera"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/signup_title"
+        app:shapeAppearanceOverlay="@style/CircleImageView"
+        app:strokeColor="#BDBDBD"
+        app:strokeWidth="1dp" />
+
     <TextView
         android:id="@+id/name_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:text="Full Name"
         android:textColor="@color/text_dark"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/signup_title" />
+        app:layout_constraintTop_toBottomOf="@id/profile_image_signup" />
 
     <EditText
         android:id="@+id/name_edit_text"
@@ -99,28 +115,6 @@
             android:paddingVertical="0dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/image_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Profile Picture (Click to select)"
-        android:textColor="@color/text_dark"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/password_layout" />
-
-    <ImageView
-        android:id="@+id/profile_image_signup"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="8dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_background"
-        android:background="@drawable/edit_text_background"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image_label" />
-
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/signup_button"
         android:layout_width="0dp"
@@ -133,7 +127,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_image_signup" />
+        app:layout_constraintTop_toBottomOf="@id/password_layout" />
 
     <LinearLayout
         android:id="@+id/login_redirect_container"
