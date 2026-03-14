@@ -58,12 +58,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:backgroundTint="@color/primary_orange"
+            android:backgroundTint="@color/toggle_button_background_tint"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:text="Newest"
             android:textAllCaps="false"
-            android:textColor="@android:color/white"
+            android:textColor="@color/toggle_button_text_color"
             android:textSize="18sp"
             app:cornerRadius="25dp" />
 
@@ -73,11 +73,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:backgroundTint="@color/toggle_button_background_tint"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:text="Popular"
             android:textAllCaps="false"
-            android:textColor="@color/text_dark"
+            android:textColor="@color/toggle_button_text_color"
             android:textSize="18sp"
             app:cornerRadius="25dp" />
 
