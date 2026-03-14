@@ -37,10 +37,17 @@ class MyRecipesFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = RecipesAdapter(emptyList()) { recipe ->
-            val action = MyRecipesFragmentDirections.actionMyRecipesFragmentToRecipeEditorFragment(recipe.id)
-            findNavController().navigate(action)
-        }
+        adapter = RecipesAdapter(
+            recipes = emptyList(),
+            onEditClick = { recipe ->
+                val action = MyRecipesFragmentDirections.actionMyRecipesFragmentToRecipeEditorFragment(recipe.id)
+                findNavController().navigate(action)
+            },
+            onRecipeClick = { recipe ->
+                val action = MyRecipesFragmentDirections.actionMyRecipesFragmentToRecipeDetailsFragment(recipe.id)
+                findNavController().navigate(action)
+            }
+        )
         binding.myRecipesRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.myRecipesRecyclerView.adapter = adapter
     }

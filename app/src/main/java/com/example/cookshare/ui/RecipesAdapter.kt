@@ -10,12 +10,14 @@ import com.squareup.picasso.Picasso
 
 class RecipesAdapter(
     private var recipes: List<Recipe>,
-    private val onEditClick: (Recipe) -> Unit
+    private val onEditClick: (Recipe) -> Unit,
+    private val onRecipeClick: (Recipe) -> Unit = {}
 ) : RecyclerView.Adapter<RecipesAdapter.RecipeViewHolder>() {
 
     class RecipeViewHolder(
         val binding: RecipeRowBinding,
-        val onEditClick: (Recipe) -> Unit
+        val onEditClick: (Recipe) -> Unit,
+        val onRecipeClick: (Recipe) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(recipe: Recipe) {
             binding.recipeNameRow.text = recipe.name
@@ -28,6 +30,11 @@ class RecipesAdapter(
             } else {
                 binding.recipeImageRow.setImageResource(R.drawable.recipe_placeholder)
             }
+            
+            binding.root.setOnClickListener {
+                onRecipeClick(recipe)
+            }
+            
             binding.editRecipeButton.setOnClickListener {
                 onEditClick(recipe)
             }
@@ -36,7 +43,7 @@ class RecipesAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val binding = RecipeRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return RecipeViewHolder(binding, onEditClick)
+        return RecipeViewHolder(binding, onEditClick, onRecipeClick)
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
