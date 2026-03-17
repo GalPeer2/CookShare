@@ -5,9 +5,8 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
 import com.example.cookshare.model.Model
-import com.example.cookshare.model.Recipe
+import com.example.cookshare.data.models.Recipe
 
 class MyRecipesViewModel(application: Application) : AndroidViewModel(application) {
     private val model = Model.getInstance(application)

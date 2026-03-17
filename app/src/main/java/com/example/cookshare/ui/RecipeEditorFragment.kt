@@ -17,7 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.cookshare.databinding.FragmentRecipeEditorBinding
 import com.example.cookshare.model.Model
-import com.example.cookshare.model.Recipe
+import com.example.cookshare.data.models.Recipe
 import com.squareup.picasso.Picasso
 import java.io.File
 import java.util.*

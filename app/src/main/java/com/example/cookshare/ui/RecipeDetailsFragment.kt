@@ -11,7 +11,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.cookshare.R
 import com.example.cookshare.databinding.FragmentRecipeDetailsBinding
 import com.example.cookshare.model.Model
-import com.example.cookshare.model.Recipe
+import com.example.cookshare.data.models.Recipe
 import com.squareup.picasso.Picasso
 
 class RecipeDetailsFragment : Fragment() {

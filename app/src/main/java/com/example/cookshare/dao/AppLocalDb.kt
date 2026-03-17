@@ -1,10 +1,13 @@
-package com.example.cookshare.model
+package com.example.cookshare.dao
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.cookshare.model.Converters
+import com.example.cookshare.data.models.Recipe
+import com.example.cookshare.data.models.User
 
 @Database(entities = [User::class, Recipe::class], version = 3)
 @TypeConverters(Converters::class)

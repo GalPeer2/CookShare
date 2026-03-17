@@ -6,7 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.cookshare.model.Model
-import com.example.cookshare.model.User
+import com.example.cookshare.data.models.User
 import com.google.firebase.auth.FirebaseAuth
 
 class EditProfileViewModel(application: Application) : AndroidViewModel(application) {

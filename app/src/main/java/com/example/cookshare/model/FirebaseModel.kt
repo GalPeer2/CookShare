@@ -2,6 +2,8 @@ package com.example.cookshare.model
 
 import android.graphics.Bitmap
 import android.util.Log
+import com.example.cookshare.data.models.Recipe
+import com.example.cookshare.data.models.User
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

@@ -1,7 +1,12 @@
-package com.example.cookshare.model
+package com.example.cookshare.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.example.cookshare.data.models.User
 
 @Dao
 interface UserDao {
@@ -11,7 +16,7 @@ interface UserDao {
     @Query("SELECT * FROM users WHERE id = :userId")
     fun getUserById(userId: String): LiveData<User?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     fun insert(vararg users: User)
 
     @Delete

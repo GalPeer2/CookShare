@@ -7,8 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.example.cookshare.model.Model
-import com.example.cookshare.model.Recipe
-import com.example.cookshare.model.User
+import com.example.cookshare.data.models.Recipe
+import com.example.cookshare.data.models.User
 import kotlinx.coroutines.launch
 
 class RecipeDetailsViewModel(application: Application, recipeId: String) : AndroidViewModel(application) {

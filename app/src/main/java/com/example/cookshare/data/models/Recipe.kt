@@ -1,4 +1,4 @@
-package com.example.cookshare.model
+package com.example.cookshare.data.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

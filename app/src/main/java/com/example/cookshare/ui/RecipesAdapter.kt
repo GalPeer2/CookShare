@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cookshare.R
 import com.example.cookshare.databinding.RecipeRowBinding
-import com.example.cookshare.model.Recipe
+import com.example.cookshare.data.models.Recipe
 import com.squareup.picasso.Picasso
 
 class RecipesAdapter(
